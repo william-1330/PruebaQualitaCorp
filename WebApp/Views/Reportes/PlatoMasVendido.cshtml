@@ -1,0 +1,54 @@
+﻿@model IEnumerable<WebApp.Models.PlatoMasVendidoViewModel>
+
+@{
+    ViewData["Title"] = "PlatoMasVendidoViewModel";
+}
+
+<h1>Plato mas vendido</h1>
+
+<body>
+    <form>
+        Meses: <input name="meses" /><br /><br />
+        <input type="submit" value="Generar Reporte" action="PlatoMasVendido" />
+    </form>
+    <br />
+</body>
+
+@{
+    if (Model != null)
+    {
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Plato)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Valor)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Items)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Plato)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Valor)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Items)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
