@@ -1,4 +1,4 @@
-﻿using CapaDatos.Models;
+﻿using CapaDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Options;
@@ -18,10 +18,13 @@ namespace CapaDatos
         }
 
         public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Factura> Facturas { get; set; }
-        public DbSet<Mesero> Meseros { get; set; }
         public DbSet<Mesa> Mesas { get; set; }
         public DbSet<DetalleXFactura> DetalleXFacturas { get; set; }
-        public DbSet<Supervisor> Supervisores { get; set; }
+        public DbSet<Producto> Productos { get; set; }
+        public DbSet<Rol> Roles { get; set; }
+
+
     }
 }

@@ -3,8 +3,8 @@ using System;
 using CapaDatos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Oracle.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
@@ -20,84 +20,102 @@ namespace CapaDatos.Migrations
                 .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CapaDatos.Models.Cliente", b =>
+            modelBuilder.Entity("CapaDatos.Entidades.Cliente", b =>
                 {
                     b.Property<int>("IdCliente")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCliente"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCliente"));
 
                     b.Property<string>("Apellidos")
                         .IsRequired()
-                        .HasColumnType("VARCHAR2(100)");
+                        .HasColumnType("VARCHAR(100)");
+
+                    b.Property<string>("Cedula")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(20)");
 
                     b.Property<string>("Direccion")
-                        .HasColumnType("VARCHAR2(100)");
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<string>("Nombres")
                         .IsRequired()
-                        .HasColumnType("VARCHAR2(100)");
+                        .HasColumnType("VARCHAR(100)");
 
-                    b.Property<int?>("Telefono")
-                        .HasColumnType("NUMBER(10)");
+                    b.Property<string>("Telefono")
+                        .HasColumnType("VARCHAR(10)");
 
                     b.HasKey("IdCliente");
 
                     b.ToTable("Clientes");
                 });
 
-            modelBuilder.Entity("CapaDatos.Models.DetalleXFactura", b =>
+            modelBuilder.Entity("CapaDatos.Entidades.DetalleXFactura", b =>
                 {
                     b.Property<int>("IdDetalleXFactura")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdDetalleXFactura"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdDetalleXFactura"));
 
-                    b.Property<int>("IdSupervisor")
-                        .HasColumnType("NUMBER(10)");
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdProducto")
+                        .HasColumnType("int");
 
                     b.Property<int>("NroFactura")
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int");
 
-                    b.Property<string>("Plato")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
+                    b.Property<decimal>("Precio")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
 
-                    b.Property<double>("Valor")
-                        .HasColumnType("BINARY_DOUBLE");
+                    b.Property<decimal>("Total")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
 
                     b.HasKey("IdDetalleXFactura");
 
-                    b.HasIndex("IdSupervisor");
+                    b.HasIndex("IdProducto");
 
                     b.HasIndex("NroFactura");
 
                     b.ToTable("DetalleXFacturas");
                 });
 
-            modelBuilder.Entity("CapaDatos.Models.Factura", b =>
+            modelBuilder.Entity("CapaDatos.Entidades.Factura", b =>
                 {
                     b.Property<int>("NroFactura")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NroFactura"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NroFactura"));
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("TIMESTAMP(7)");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("IdCliente")
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int");
 
-                    b.Property<int>("IdMesero")
-                        .HasColumnType("NUMBER(10)");
+                    b.Property<int?>("IdMesero")
+                        .IsRequired()
+                        .HasColumnType("int");
 
-                    b.Property<int>("NroMesa")
-                        .HasColumnType("NUMBER(10)");
+                    b.Property<int?>("IdSupervisor")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NroMesa")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Total")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
 
                     b.HasKey("NroFactura");
 
@@ -105,122 +123,154 @@ namespace CapaDatos.Migrations
 
                     b.HasIndex("IdMesero");
 
+                    b.HasIndex("IdSupervisor");
+
                     b.HasIndex("NroMesa");
 
                     b.ToTable("Facturas");
                 });
 
-            modelBuilder.Entity("CapaDatos.Models.Mesa", b =>
+            modelBuilder.Entity("CapaDatos.Entidades.Mesa", b =>
                 {
                     b.Property<int>("NroMesa")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
-
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NroMesa"));
+                        .HasColumnType("int");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("VARCHAR2(100)");
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<int>("Puestos")
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int");
 
                     b.Property<bool>("Reservada")
-                        .HasColumnType("NUMBER(1)");
+                        .HasColumnType("bit");
 
                     b.HasKey("NroMesa");
 
                     b.ToTable("Mesas");
                 });
 
-            modelBuilder.Entity("CapaDatos.Models.Mesero", b =>
+            modelBuilder.Entity("CapaDatos.Entidades.Producto", b =>
                 {
-                    b.Property<int>("IdMesero")
+                    b.Property<int>("IdProducto")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int");
 
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdMesero"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdProducto"));
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(100)");
+
+                    b.Property<decimal>("Precio")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("decimal(12,2)");
+
+                    b.HasKey("IdProducto");
+
+                    b.ToTable("Productos");
+                });
+
+            modelBuilder.Entity("CapaDatos.Entidades.Rol", b =>
+                {
+                    b.Property<int>("IdRol")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRol"));
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("IdRol");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("CapaDatos.Entidades.Usuario", b =>
+                {
+                    b.Property<int>("IdUsuario")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuario"));
 
                     b.Property<int>("Antiguedad")
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int");
 
                     b.Property<string>("Apellidos")
                         .IsRequired()
-                        .HasColumnType("VARCHAR2(100)");
+                        .HasColumnType("VARCHAR(100)");
+
+                    b.Property<string>("Clave")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(100)");
+
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<int>("Edad")
-                        .HasColumnType("NUMBER(10)");
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdRol")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nombres")
                         .IsRequired()
-                        .HasColumnType("VARCHAR2(100)");
+                        .HasColumnType("VARCHAR(100)");
 
-                    b.HasKey("IdMesero");
+                    b.HasKey("IdUsuario");
 
-                    b.ToTable("Meseros");
+                    b.HasIndex("IdRol");
+
+                    b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("CapaDatos.Models.Supervisor", b =>
+            modelBuilder.Entity("CapaDatos.Entidades.DetalleXFactura", b =>
                 {
-                    b.Property<int>("IdSupervisor")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
-
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSupervisor"));
-
-                    b.Property<int>("Antiguedad")
-                        .HasColumnType("NUMBER(10)");
-
-                    b.Property<string>("Apellidos")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR2(100)");
-
-                    b.Property<int>("Edad")
-                        .HasColumnType("NUMBER(10)");
-
-                    b.Property<string>("Nombres")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR2(100)");
-
-                    b.HasKey("IdSupervisor");
-
-                    b.ToTable("Supervisores");
-                });
-
-            modelBuilder.Entity("CapaDatos.Models.DetalleXFactura", b =>
-                {
-                    b.HasOne("CapaDatos.Models.Supervisor", "Supervisor")
+                    b.HasOne("CapaDatos.Entidades.Producto", "Producto")
                         .WithMany()
-                        .HasForeignKey("IdSupervisor")
+                        .HasForeignKey("IdProducto")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CapaDatos.Models.Factura", "Factura")
-                        .WithMany()
+                    b.HasOne("CapaDatos.Entidades.Factura", "Factura")
+                        .WithMany("DetalleXFacturas")
                         .HasForeignKey("NroFactura")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Factura");
 
-                    b.Navigation("Supervisor");
+                    b.Navigation("Producto");
                 });
 
-            modelBuilder.Entity("CapaDatos.Models.Factura", b =>
+            modelBuilder.Entity("CapaDatos.Entidades.Factura", b =>
                 {
-                    b.HasOne("CapaDatos.Models.Cliente", "Cliente")
+                    b.HasOne("CapaDatos.Entidades.Cliente", "Cliente")
                         .WithMany()
                         .HasForeignKey("IdCliente")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CapaDatos.Models.Mesero", "Mesero")
+                    b.HasOne("CapaDatos.Entidades.Usuario", "Mesero")
                         .WithMany()
                         .HasForeignKey("IdMesero")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CapaDatos.Models.Mesa", "Mesa")
+                    b.HasOne("CapaDatos.Entidades.Usuario", "Supervisor")
+                        .WithMany()
+                        .HasForeignKey("IdSupervisor")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CapaDatos.Entidades.Mesa", "Mesa")
                         .WithMany()
                         .HasForeignKey("NroMesa")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -231,6 +281,24 @@ namespace CapaDatos.Migrations
                     b.Navigation("Mesa");
 
                     b.Navigation("Mesero");
+
+                    b.Navigation("Supervisor");
+                });
+
+            modelBuilder.Entity("CapaDatos.Entidades.Usuario", b =>
+                {
+                    b.HasOne("CapaDatos.Entidades.Rol", "Rol")
+                        .WithMany()
+                        .HasForeignKey("IdRol")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("CapaDatos.Entidades.Factura", b =>
+                {
+                    b.Navigation("DetalleXFacturas");
                 });
 #pragma warning restore 612, 618
         }

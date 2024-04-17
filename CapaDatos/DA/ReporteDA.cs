@@ -1,4 +1,4 @@
-﻿using CapaDatos.Models;
+﻿using CapaDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
@@ -18,61 +18,86 @@ namespace CapaDatos.DA
             _context = context;
         }
 
-        public IEnumerable TotalXMesero(DateTime fecha)
+        public IEnumerable TotalXMesero(DateTime fechaInicio, DateTime fechaFin)
         {
-            var result = from m in _context.Meseros.DefaultIfEmpty()
+            var result = from m in _context.Usuarios.DefaultIfEmpty()
 
-                                 join f in _context.Facturas.DefaultIfEmpty().Where(x => x.Fecha >= fecha) on m.IdMesero equals f.IdMesero into fs
-                                 from fitem in fs.DefaultIfEmpty()
+                         join f in _context.Facturas.DefaultIfEmpty().Where(x => x.Fecha.Date >= fechaInicio.Date && x.Fecha.Date <= fechaFin.Date) on m.IdUsuario equals f.IdMesero into fs
+                         from fitem in fs.DefaultIfEmpty()
 
-                                 join d in _context.DetalleXFacturas.DefaultIfEmpty() on fitem.NroFactura equals d.NroFactura into ds
-                                 from ditem in ds.DefaultIfEmpty()
+                         join d in _context.DetalleXFacturas.DefaultIfEmpty() on fitem.NroFactura equals d.NroFactura into ds
+                         from ditem in ds.DefaultIfEmpty()
 
-                                 group ditem by new { m.IdMesero, m.Nombres, m.Apellidos } into g
-                                 select new
-                                 {
-                                     IdMesero = g.Key.IdMesero,
-                                     Nombres = g.Key.Nombres,
-                                     Apellidos = g.Key.Apellidos,
-                                     Valor = g.Sum(d => d.Valor)
-                                 };
+                         group ditem by new { m.IdUsuario, m.Nombres, m.Apellidos } into g
+                         select new
+                         {
+                             IdMesero = g.Key.IdUsuario,
+                             Nombres = g.Key.Nombres,
+                             Apellidos = g.Key.Apellidos,
+                             Valor = g.Sum(d => d.Total)
+                         };
 
             return result;
         }
 
-        public IEnumerable CunsumoXCliente(DateTime fecha, double valor)
+        public IEnumerable CunsumoXCliente(DateTime fechaInicio, DateTime fechaFin, decimal valor)
         {
             var result = from c in _context.Clientes.DefaultIfEmpty()
-                                 join f in _context.Facturas.DefaultIfEmpty().Where(x => x.Fecha >= fecha) on c.IdCliente equals f.IdCliente
-                                 join d in _context.DetalleXFacturas on f.NroFactura equals d.NroFactura
-                                 group d by new { c.IdCliente, c.Nombres, c.Apellidos } into g
-                                 select new
-                                 {
-                                     IdCliente = g.Key.IdCliente,
-                                     Nombres = g.Key.Nombres,
-                                     Apellidos = g.Key.Apellidos,
-                                     Valor = g.Sum(d => d.Valor)
-                                 };
+                         join f in _context.Facturas.DefaultIfEmpty().Where(x=> x.Fecha.Date >= fechaInicio.Date && x.Fecha.Date <= fechaFin.Date) on c.IdCliente equals f.IdCliente
+                         join d in _context.DetalleXFacturas on f.NroFactura equals d.NroFactura
+                         group d by new { c.IdCliente, c.Nombres, c.Apellidos } into g
+                         select new
+                         {
+                             IdCliente = g.Key.IdCliente,
+                             Nombres = g.Key.Nombres,
+                             Apellidos = g.Key.Apellidos,
+                             Valor = g.Sum(d => d.Total)
+                         };
 
             result = result.Where(x => x.Valor >= valor);
 
             return result;
         }
 
-        public IEnumerable PlatoMasVendido(DateTime fecha)
+        public IEnumerable PlatoMasVendido(DateTime fechaInicio, DateTime fechaFin)
         {
             var result = from d in _context.DetalleXFacturas
-                         join f in _context.Facturas.Where(x => x.Fecha >= fecha) on d.NroFactura equals f.NroFactura
-                         group d by new { d.Plato } into g
+                         join f in _context.Facturas.Where(x => x.Fecha.Date >= fechaInicio.Date && x.Fecha.Date <= fechaFin.Date) on d.NroFactura equals f.NroFactura
+                         join p in _context.Productos on d.IdProducto equals p.IdProducto
+                         group d by new { p.Nombre } into g
                          select new
                          {
-                             Plato = g.Key.Plato,
-                             Valor = g.Sum(d => d.Valor),
+                             Plato = g.Key.Nombre,
+                             Valor = g.Sum(d => d.Total),
                              Items = g.Count()
                          };
 
             var maxValue = result.Max(x => x.Valor);
             return result.Where(x => x.Valor == maxValue);
+
+        }
+
+        public IEnumerable General(DateTime fechaInicio, DateTime fechaFin)
+        {
+            var result = from f in _context.Facturas.Where(x => x.Fecha.Date >= fechaInicio.Date && x.Fecha.Date <= fechaFin.Date)
+                         join m in _context.Usuarios on f.IdMesero equals m.IdUsuario
+                         join s in _context.Usuarios on f.IdSupervisor equals s.IdUsuario
+                         join d in _context.DetalleXFacturas on f.NroFactura equals d.NroFactura
+                         join p in _context.Productos on d.IdProducto equals p.IdProducto
+                         orderby f.NroFactura
+                         select new
+                         {
+                             NroFactura = f.NroFactura,
+                             Fecha = f.Fecha,
+                             Producto = p.Nombre,
+                             Precio = d.Precio,
+                             Cantidad = d.Cantidad,
+                             Total = d.Total,
+                             NombreMesero = m.Nombres + " " + m.Apellidos,
+                             NombreSupervisor = s.Nombres + " " + s.Apellidos
+                         };
+
+            return result;
 
         }
     }

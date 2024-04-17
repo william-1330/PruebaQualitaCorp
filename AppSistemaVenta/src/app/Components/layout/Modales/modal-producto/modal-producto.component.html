@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>{{tituloAccion}} Plato</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="formularioProducto">
+        <mat-grid-list cols="1" rowHeight="80px">
+
+            <mat-grid-tile>
+                <mat-form-field appearance="outline">
+                    <mat-label>Nombre</mat-label>
+                    <input matInput autocomplete="off" formControlName="nombre" matTooltip="Descripción del plato o bebida">
+                    <mat-icon matSuffix>fit_screen</mat-icon>
+                </mat-form-field>
+            </mat-grid-tile>
+
+            <mat-grid-tile>
+                <mat-form-field appearance="outline">
+                    <mat-label>Precio</mat-label>
+                    <input matInput type="number" autocomplete="off" formControlName="precio" type="text">
+                    <mat-icon matSuffix>attach_money</mat-icon>
+                </mat-form-field>
+            </mat-grid-tile>
+
+        </mat-grid-list>
+    </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close color="warn">Volver</button>
+    <button mat-raised-button color="primary"
+        [disabled]="formularioProducto.invalid"
+        (click)="guardarEditar_Producto()"
+    >{{botonAccion}}</button>
+
+
+</mat-dialog-actions>

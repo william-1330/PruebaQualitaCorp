@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>{{tituloAccion}} Mesa</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="formularioMesa">
+        <mat-grid-list cols="1" rowHeight="80px">
+
+            <mat-grid-tile>
+                <mat-form-field appearance="outline">
+                    <mat-label>Número Mesa</mat-label>
+                    <input matInput type="number" autocomplete="off" formControlName="nroMesa" matTooltip="Número de la mesa">
+                    <mat-icon matSuffix>account-box</mat-icon>
+                </mat-form-field>
+            </mat-grid-tile>
+
+            <mat-grid-tile>
+                <mat-form-field appearance="outline">
+                    <mat-label>Nombre</mat-label>
+                    <input matInput autocomplete="off" formControlName="nombre" matTooltip="Descripción de la mesa">
+                    <mat-icon matSuffix>account-box</mat-icon>
+                </mat-form-field>
+            </mat-grid-tile>
+
+            <mat-grid-tile>
+                <mat-form-field appearance="outline">
+                    <mat-label>Reservada</mat-label>
+                    <mat-select [(ngModel)]="formularioMesa.value.reservada" formControlName="reservada" matTooltip="Indica si está reservada">
+                      <mat-option [value]="true">Si</mat-option>
+                      <mat-option [value]="false">No</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                <!-- <mat-form-field appearance="outline">
+                    <mat-label>Reservada</mat-label>
+                    <input matInput autocomplete="off" formControlName="reservada">
+                    <mat-icon matSuffix>account-box</mat-icon>
+                </mat-form-field> -->
+            </mat-grid-tile>
+
+            <mat-grid-tile>
+                <mat-form-field appearance="outline">
+                    <mat-label>Puestos</mat-label>
+                    <input matInput type="number" autocomplete="off" formControlName="puestos" matTooltip="Número de puestos">
+                    <mat-icon matSuffix>account-box</mat-icon>
+                </mat-form-field>
+            </mat-grid-tile>
+
+        </mat-grid-list>
+    </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close color="warn">Volver</button>
+    <button mat-raised-button color="primary" [disabled]="formularioMesa.invalid"
+        (click)="guardarEditar_Mesa()">{{botonAccion}}</button>
+</mat-dialog-actions>

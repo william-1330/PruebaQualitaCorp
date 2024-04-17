@@ -1,0 +1,91 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+        <!-- <h1>Sistema Venta</h1> -->
+        <button mat-icon-button routerLink="/pages/dashboard"
+            style="width: 100px; font-size: 20px; margin-right: 20px;">
+            <mat-icon>dashboard</mat-icon>
+            <!-- <div mat-line>Tienda</div> -->
+        </button>
+
+        <button mat-icon-button (click)="sidenav.toggle();">
+            <mat-icon>menu</mat-icon>
+        </button>
+
+        <span style="flex: 1 1 auto;"></span>
+        <label style="font-size: 14px; margin-right: 20px;">
+            {{correoUsuario}} | {{rolUsuario}}
+        </label>
+        <button mat-icon-button (click)="cerrarSesion()">
+            <mat-icon>logout</mat-icon>
+        </button>
+
+    </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-sidenav-container>
+    <mat-sidenav #sidenav opened="true" mode="side" style="width: 200px;">
+        <mat-nav-list>
+            <!-- <mat-list-item menu routerLink="/pages/dashboard">
+                <mat-icon mat-list-icon>dashboard</mat-icon>
+                <div mat-line>Dashboard</div>
+            </mat-list-item> -->
+            <mat-list-item menu routerLink="/pages/usuarios">
+                <mat-icon mat-list-icon>group</mat-icon>
+                <div mat-line>Usuarios</div>
+            </mat-list-item>
+            <mat-list-item menu routerLink="/pages/productos">
+                <mat-icon mat-list-icon>collections_bookmark</mat-icon>
+                <div mat-line>Platos</div>
+            </mat-list-item>
+            <mat-list-item menu routerLink="/pages/mesas">
+                <mat-icon mat-list-icon>collections_bookmark</mat-icon>
+                <div mat-line>Mesas</div>
+            </mat-list-item>
+            <mat-list-item menu routerLink="/pages/clientes">
+                <mat-icon mat-list-icon>group</mat-icon>
+                <div mat-line>Clientes</div>
+            </mat-list-item>
+            <mat-list-item menu routerLink="/pages/facturas">
+                <mat-icon mat-list-icon>edit_note</mat-icon>
+                <div mat-line>Facturas</div>
+            </mat-list-item>
+            <mat-list-item menu routerLink="/pages/generarFactura">
+                <mat-icon mat-list-icon>currency_exchange</mat-icon>
+                <div mat-line>Generar Factura</div>
+            </mat-list-item>
+            <mat-list-item menu routerLink="/pages/reportes">
+                <mat-icon mat-list-icon>receipt</mat-icon>
+                <div mat-line>Reportes</div>
+            </mat-list-item>
+
+            <!-- <mat-list-item [matMenuTriggerFor]="menu">
+                <div mat-line>Gestion</div>                
+                <mat-icon mat-list-icon>receipt</mat-icon>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item>Usuarios</button>
+                    <button mat-menu-item>Productos</button>
+                    <button mat-menu-item>Mesas</button>
+                    <button mat-menu-item>Clientes</button>
+                </mat-menu>
+            </mat-list-item> -->
+
+            <!-- <mat-list-item>
+                <mat-icon mat-list-icon>receipt</mat-icon>
+                <div mat-line>1</div>
+            </mat-list-item> -->
+
+            
+
+
+        </mat-nav-list>
+
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <div style="height: 90vh;">
+            <router-outlet></router-outlet>
+        </div>
+
+    </mat-sidenav-content>
+
+</mat-sidenav-container>

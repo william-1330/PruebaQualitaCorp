@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/11d97d99-44c5-4ae3-9389-29eb225109e9/resourceGroups/CapaNegocio20240308074629ResourceGroup/providers/Microsoft.Web/sites/WebAppWM",
+    "appService.deploySubpath": "dist"
+}

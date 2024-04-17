@@ -1,4 +1,6 @@
-﻿using CapaDatos.Models;
+﻿using AutoMapper;
+using CapaDatos.DTO;
+using CapaDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,45 +14,45 @@ namespace CapaDatos.DA
     public class FacturaDA
     {
         private readonly TiendaContext _context;
+        private readonly IMapper _mapper;
 
-        public FacturaDA(TiendaContext context)
+        public FacturaDA(TiendaContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Factura>> Index()
+        public async Task<List<FacturaDTO>> ListaXFecha(DateTime fechaInicio, DateTime fechaFin)
         {
-            var tiendaContext = _context.Facturas.Include(f => f.Cliente).Include(f => f.Mesa).Include(f => f.Mesero);
-            return await tiendaContext.ToListAsync();
+            var tiendaContext = _context.Facturas.Include(f => f.Cliente).Include(f => f.Mesa)
+                .Include(f => f.Mesero).Include(f => f.DetalleXFacturas).ThenInclude(x => x.Producto).Where(x => x.Fecha.Date >= fechaInicio.Date && x.Fecha.Date <= fechaFin.Date);
+            return _mapper.Map<List<FacturaDTO>>(await tiendaContext.ToListAsync());
         }
 
-        public async Task<Factura> Details(int? id)
+        public async Task<List<FacturaDTO>> FacturaXNumero(int numFactura)
         {
-            var factura = await _context.Facturas
-                .Include(f => f.Cliente)
-                .Include(f => f.Mesa)
-                .Include(f => f.Mesero)
-                .FirstOrDefaultAsync(m => m.NroFactura == id);
-            return factura;
+            var tiendaContext = _context.Facturas.Include(f => f.Cliente).Include(f => f.Mesa)
+                .Include(f => f.Mesero).Include(f => f.DetalleXFacturas).ThenInclude(x=>x.Producto).Where(x=>x.NroFactura == numFactura);
+            return _mapper.Map<List<FacturaDTO>>(await tiendaContext.ToListAsync());
         }
 
-        public async Task Create(Factura factura)
+        public async Task Crear(FacturaDTO factura)
         {
-            _context.Add(factura);
+            _context.Add(_mapper.Map<Factura>(factura));
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Factura> Edit(int? id)
-        {
-            var factura = await _context.Facturas.FindAsync(id);
-            return factura;
-        }
-
-        public async Task<Factura> Edit(Factura factura)
+        public async Task<FacturaDTO> Editar(FacturaDTO factura)
         {
             try
             {
-                _context.Update(factura);
+                if (!FacturaExists(factura.NroFactura))
+                    throw new TaskCanceledException("La factura no existe");
+
+                var facturaModelo = _mapper.Map<Factura>(factura);
+
+                _context.Update(facturaModelo);
+
                 await _context.SaveChangesAsync();
                 return factura;
             }
@@ -67,18 +69,7 @@ namespace CapaDatos.DA
             }
         }
 
-        public async Task<Factura> Delete(int? id)
-        {
-            var factura = await _context.Facturas
-                .Include(f => f.Cliente)
-                .Include(f => f.Mesa)
-                .Include(f => f.Mesero)
-                .FirstOrDefaultAsync(m => m.NroFactura == id);
-
-            return factura;
-        }
-
-        public async Task<bool> DeleteConfirmed(int id)
+        public async Task<bool> Eliminar(int id)
         {
             var factura = await _context.Facturas.FindAsync(id);
             if (factura != null)

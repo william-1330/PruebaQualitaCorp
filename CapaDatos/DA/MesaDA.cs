@@ -1,4 +1,6 @@
-﻿using CapaDatos.Models;
+﻿using AutoMapper;
+using CapaDatos.DTO;
+using CapaDatos.Entidades;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,50 +13,52 @@ namespace CapaDatos.DA
     public class MesaDA
     {
         private readonly TiendaContext _context;
+        private readonly IMapper _mapper;
 
-        public MesaDA(TiendaContext context)
+        public MesaDA(TiendaContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Mesa>> Index()
-        {
-            var tiendaContext = _context.Mesas;
-            return await tiendaContext.ToListAsync();
-        }
-
-        public async Task<Mesa> Details(int? id)
-        {
-            var Mesa = await _context.Mesas
-                .FirstOrDefaultAsync(m => m.NroMesa == id);
-            return Mesa;
-        }
-
-        public async Task Create(Mesa Mesa)
-        {
-            _context.Add(Mesa);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<Mesa> Edit(int? id)
-        {
-            var Mesa = await _context.Mesas.FindAsync(id);
-            return Mesa;
-        }
-
-        public async Task<Mesa> Edit(Mesa Mesa)
+        public async Task<List<MesaDTO>> Lista()
         {
             try
             {
-                _context.Update(Mesa);
-                await _context.SaveChangesAsync();
-                return Mesa;
+                var tiendaContext = _context.Mesas;
+                return _mapper.Map<List<MesaDTO>>(await tiendaContext.ToListAsync());
             }
-            catch (DbUpdateConcurrencyException ex)
+            catch
             {
-                if (!MesaExists(Mesa.NroMesa))
+                throw;
+            }
+        }
+
+        public async Task Crear(MesaDTO mesa)
+        {
+            _context.Add(_mapper.Map<Mesa>(mesa));
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<MesaDTO> Editar(MesaDTO mesa)
+        {
+            try
+            {
+                if (!MesaExists(mesa.NroMesa))
+                    throw new TaskCanceledException("El mesa no existe");
+
+                var mesaModelo = _mapper.Map<Mesa>(mesa);
+
+                _context.Update(mesaModelo);
+
+                await _context.SaveChangesAsync();
+                return mesa;
+            }
+            catch (Exception ex)
+            {
+                if (!MesaExists(mesa.NroMesa))
                 {
-                    return Mesa;
+                    return mesa;
                 }
                 else
                 {
@@ -63,20 +67,12 @@ namespace CapaDatos.DA
             }
         }
 
-        public async Task<Mesa> Delete(int? id)
+        public async Task<bool> Eliminar(int id)
         {
-            var Mesa = await _context.Mesas
-                .FirstOrDefaultAsync(m => m.NroMesa == id);
-
-            return Mesa;
-        }
-
-        public async Task<bool> DeleteConfirmed(int id)
-        {
-            var Mesa = await _context.Mesas.FindAsync(id);
-            if (Mesa != null)
+            var mesa = await _context.Mesas.FindAsync(id);
+            if (mesa != null)
             {
-                _context.Mesas.Remove(Mesa);
+                _context.Mesas.Remove(mesa);
             }
             if (await _context.SaveChangesAsync() <= 0)
                 return false;
