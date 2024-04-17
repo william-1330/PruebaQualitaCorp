@@ -13,7 +13,7 @@ builder.Services.AddControllersWithViews(
     );
 
 builder.Services.AddDbContext<TiendaContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AppConnectionSQLServer"))
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AppConnectionSQLServerAzure"))
 );
 
 builder.Services.AddScoped<FacturaController>();

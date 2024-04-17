@@ -22,8 +22,8 @@ namespace CapaNegocio.Controllers
         [Route("TotalXMesero")]
         public IActionResult TotalXMesero(string fechaInicio, string fechaFin)
         {
-            DateTime dateInicio = DateTime.Parse(fechaInicio);
-            DateTime dateFin = DateTime.Parse(fechaFin);
+            DateTime dateInicio = DateTime.Parse(fechaInicio, new CultureInfo("es-CO"));
+            DateTime dateFin = DateTime.Parse(fechaFin, new CultureInfo("es-CO"));
 
             IEnumerable resultado = _reporteDA.TotalXMesero(dateInicio, dateFin);
             return new JsonResult(resultado);
@@ -33,8 +33,8 @@ namespace CapaNegocio.Controllers
         [Route("CunsumoXCliente")]
         public IActionResult CunsumoXCliente(string fechaInicio, string fechaFin, double valor)
         {
-            DateTime dateInicio = DateTime.Parse(fechaInicio);
-            DateTime dateFin = DateTime.Parse(fechaFin, CultureInfo.CurrentCulture);
+            DateTime dateInicio = DateTime.Parse(fechaInicio, new CultureInfo("es-CO"));
+            DateTime dateFin = DateTime.Parse(fechaFin, new CultureInfo("es-CO"));
 
             IEnumerable resultado = _reporteDA.CunsumoXCliente(dateInicio, dateFin, (decimal)valor);
             return new JsonResult(resultado);
@@ -44,8 +44,8 @@ namespace CapaNegocio.Controllers
         [Route("PlatoMasVendido")]
         public IActionResult PlatoMasVendido(string fechaInicio, string fechaFin)
         {
-            DateTime dateInicio = DateTime.Parse(fechaInicio);
-            DateTime dateFin = DateTime.Parse(fechaFin);
+            DateTime dateInicio = DateTime.Parse(fechaInicio, new CultureInfo("es-CO"));
+            DateTime dateFin = DateTime.Parse(fechaFin, new CultureInfo("es-CO"));
 
             IEnumerable resultado = _reporteDA.PlatoMasVendido(dateInicio, dateFin);
             return new JsonResult(resultado);
@@ -55,8 +55,8 @@ namespace CapaNegocio.Controllers
         [Route("General")]
         public async Task<IActionResult> General(string fechaInicio, string fechaFin)
         {
-            DateTime dateInicio = DateTime.Parse(fechaInicio);
-            DateTime dateFin = DateTime.Parse(fechaFin);
+            DateTime dateInicio = DateTime.Parse(fechaInicio, new CultureInfo("es-CO"));
+            DateTime dateFin = DateTime.Parse(fechaFin, new CultureInfo("es-CO"));
             IEnumerable resultado = _reporteDA.General(dateInicio, dateFin);
             return new JsonResult(resultado);
         }

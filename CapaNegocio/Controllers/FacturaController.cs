@@ -27,8 +27,8 @@ namespace CapaNegocio.Controllers
         [Route("ListaXFecha")]
         public async Task<IActionResult> ListaXFecha(string fechaInicio, string fechaFin)
         {
-            DateTime dateInicio = DateTime.Parse(fechaInicio);
-            DateTime dateFin = DateTime.Parse(fechaFin);
+            DateTime dateInicio = DateTime.Parse(fechaInicio, new CultureInfo("es-CO"));
+            DateTime dateFin = DateTime.Parse(fechaFin, new CultureInfo("es-CO"));
             IEnumerable<FacturaDTO> listFactura = await _facturaDA.ListaXFecha(dateInicio, dateFin);
             return new JsonResult(listFactura);
         }

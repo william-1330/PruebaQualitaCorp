@@ -93,7 +93,7 @@ namespace CapaDatos.DA
                 resultado = tablaventa.Select(v => v.Total).Sum(v => v);
             }
 
-            return Convert.ToString(resultado, new CultureInfo("es-PE"));
+            return Convert.ToString(resultado, new CultureInfo("es-CO"));
 
         }
 
